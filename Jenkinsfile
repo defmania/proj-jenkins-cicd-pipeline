@@ -29,7 +29,7 @@ pipeline {
                 // Clone the Git repository
                 git branch: 'main',
                     //credentialsId: 'repo-credentials', (required if using private repo)
-                    url: 'git@github.com:defmania/terraform-devops-project-rw-app.git'
+                    url: 'git@github.com:defmania/proj-jenkins-cicd-pipeline.git'
 
                 sh "ls -lart"
             }
@@ -37,6 +37,7 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
+                    //specify your own credentialsId for connecting to AWS
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-dev-02']]){
                         sh 'echo "Terraform Init"'
                         sh 'terraform init'
@@ -49,6 +50,7 @@ pipeline {
                 script {
                     if (params.PLAN_TERRAFORM) {
                         withVault([configuration: vault_config, vaultSecrets: secrets]) {
+                          //specify your own credentialsId for connecting to AWS
                           withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-dev-02']]){
                                 sh 'echo "Terraform Plan"'
                                 sh 'terraform plan'
@@ -64,6 +66,7 @@ pipeline {
                 script {
                     if (params.APPLY_TERRAFORM) {
                         withVault([configuration: vault_config, vaultSecrets: secrets]) {
+                          //specify your own credentialsId for connecting to AWS
                           withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-dev-02']]){
                                 sh 'echo "Terraform Apply"'
                                 sh 'terraform apply -auto-approve'
@@ -79,6 +82,7 @@ pipeline {
                 script {
                     if (params.DESTROY_TERRAFORM) {
                         withVault([configuration: vault_config, vaultSecrets: secrets]) {
+                          //specify your own credentialsId for connecting to AWS
                           withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-dev-02']]){
                                 sh 'echo "Terraform Destroy"'
                                 sh 'terraform destroy -auto-approve'
